@@ -6,3 +6,13 @@ body{
   background: rgb(57,70,139);
   background: radial-gradient(circle, rgba(57,70,139,1) 67%, rgba(39,44,85,1) 100%);
 }
+
+.ima{
+
+}
+@media (max-width: 768px ) {
+    .ima{
+      width: 100px;
+      height: 100px;
+    }
+}

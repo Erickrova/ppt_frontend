@@ -28,8 +28,7 @@ const FormularioCrearSala = () => {
             return
         }
         try {
-            const {data} = await axios(`http://localhost:4000/api/room/create/${codigo}/${nombre}`)
-            console.log(data)
+            const {data} = await axios(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/room/create/${codigo}/${nombre}`)
             setSalaObtenida(data)
             router.push("/sala")
         } catch (error) {

@@ -67,8 +67,20 @@ const Sala = () => {
                 filtrar(data)
             }
         })
-        socket.on("leaveUser",data=>{
+        socket.on("leaveUser",async data=>{
+            if(data.length == 0){
+                try {
+                    await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/room/delete/${sala}`)
+                } catch (error) {
+                }
+            }
             if(data.includes(usuario)){
+                if(contrincante){
+                    try {
+                        await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/room/deleteuser/${sala}/${contrincante}`)
+                    } catch (error) {
+                    }
+                }
                 setContrincante("")
                 handlerevancha()
             }
@@ -87,6 +99,9 @@ const Sala = () => {
                 setEleccionContrincante(data.eleccion)
             }
         })
+        if(!sala){
+            router.push("/")
+        }
     })
     useEffect(()=>{
         if(ronda === 3){
@@ -133,22 +148,24 @@ const Sala = () => {
     },[rondasContrincante,rondasUsuario])
 
     
-    if (!sala) {router.push("/")}
+    if (!sala) return null
   return (
         <LayoutSala >
             {eligiendo ? (
                 <Elegir />
             ) : (
-
+                <>
+                {ganador ? (
+                        <p className="text-white uppercase text-xl text-center">ganador: {ganador}</p>
+                ) : null}
                 <div
-                    
-                className="w-full h-full flex justify-evenly items-center">
+                    className="w-full h-full flex flex-col gap-2 md:flex-row justify-center md:justify-evenly items-center pb-10">
                 <div>
                     <h2 className="text-2xl font-bold text-white">{usuario}</h2>
-                    <p className={`text-white ${eleccion ? "mb-16":""}`}>Rondas Ganadas {rondasUsuario}/3</p>
+                    <p className={`text-white ${ganador == usuario ? "mb-14 md:16":""}`}>Rondas Ganadas {rondasUsuario}/3</p>
                     {eleccion ? (
-                        <Image className={`rounded-full ${ganador == usuario ? " animate-bounce":""}`} height={200} width={200} src={`/img/${eleccion}.png`} priority  alt="eleccion" />
-                    ):null}
+                        <Image className={` ima rounded-full ${ganador == usuario ? " animate-bounce":""}`} height={200} width={200} src={`/img/${eleccion}.png`} priority  alt="eleccion" />
+                        ):null}
                     </div>
                 <div>
                     {enPartida ? (
@@ -159,6 +176,7 @@ const Sala = () => {
                         </button>
                     ):(
                         <div className="flex gap-2 flex-col">        
+                    
                             <button
                             onClick={handlerevancha}
                             className="text-xl font-bold text-white px-3 py-2 bg-green-600 hover:bg-green-700   rounded-md">
@@ -175,12 +193,13 @@ const Sala = () => {
                 </div>
                 <div>
                     <h2 className="text-2xl font-bold text-white">{contrincante ? contrincante : "Esperando rival..."}</h2>
-                    <p className={`text-white ${eleccionContrincante ? "mb-16":""}`}>Rondas Ganadas {rondasContrincante}/3</p>
+                    <p className={`text-white ${ganador == contrincante ? "mb-14 md:16":""}`}>Rondas Ganadas {rondasContrincante}/3</p>
                     {eleccionContrincante ? (
-                        <Image className={`rounded-full ${ganador == contrincante ? " animate-bounce":""}`} height={200} width={200} src={`/img/${eleccionContrincante}.png`} priority  alt="eleccion" />
-                    ):null}
+                        <Image className={` ima rounded-full ${ganador == contrincante ? " animate-bounce":""}`} height={200} width={200} src={`/img/${eleccionContrincante}.png`} priority  alt="eleccion" />
+                        ):null}
                 </div>
             </div>
+            </>
                 )}
         </LayoutSala>
   

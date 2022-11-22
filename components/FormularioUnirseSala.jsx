@@ -1,9 +1,8 @@
 import { useRouter } from "next/router"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import axios from "axios"
 import useApp from "../hooks/useApp"
 import Alerta from "./Alerta"
-
 
 const FormularioUnirseSala = () => {
     const [nombre,setNombre] = useState("")
@@ -26,18 +25,21 @@ const FormularioUnirseSala = () => {
             return
         }
         try {
-            const {data} = await axios(`http://localhost:4000/api/room/join/${codigo}/${nombre}`)
+            const {data} = await axios(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/room/join/${codigo}/${nombre}`)
             setSalaObtenida(data)
             router.push("/sala")
+           
         } catch (error) {
             // console.log(error.response?.data.msg)
-            setAlerta("Esta sala no existe")
+            setAlerta(error?.response?.data?.msg)
             setTimeout(()=>{
                 setAlerta("")
             },3000)
             
         }
     }
+
+
 
   return (
     <form  className="mt-4"

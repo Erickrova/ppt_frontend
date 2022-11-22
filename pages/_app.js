@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { AppProvider } from '../context/AppProvider'
 import '../styles/globals.css'
 import io from "socket.io-client"
+import axios from "axios"
 
 
 
@@ -25,6 +26,13 @@ function MyApp({ Component, pageProps }) {
       // console.log(globalUser," entró a la sala")
     }
     if(router.pathname != "/sala" && onRoom){
+      const deleteuser = async () =>{
+        try {
+            await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/room/deleteuser/${globalRoom}/${globalUser}`)
+        } catch (error) {
+        }
+      }
+      deleteuser()
       socket.emit("leaveroom",{usuario:globalUser,sala:globalRoom})
       // console.log(globalUser," abandonó la sala")
       setOnRoom(false)
